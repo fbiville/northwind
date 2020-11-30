@@ -11,15 +11,15 @@ public class Example {
 
   public static void main(String...args) {
 
-    Driver driver = GraphDatabase.driver("bolt://<HOST>:<BOLTPORT>",
-              AuthTokens.basic("<USERNAME>","<PASSWORD>"));
+    Driver driver = GraphDatabase.driver("neo4j+s://demo.neo4jlabs.com:7687",
+              AuthTokens.basic("northwind","northwind"));
 
-    try (Session session = driver.session(SessionConfig.forDatabase("neo4j"))) {
+    try (Session session = driver.session(SessionConfig.forDatabase("northwind"))) {
 
       String cypherQuery =
-        "MATCH (p:Product)-[:PART_OF]->(:Category)-[:PARENT*0..]-> " +
-        "(:Category {categoryName:$category}) " +
-        "RETURN p.productName as product " ;
+        "MATCH (p:Product)-[:PART_OF]->(:Category)-[:PARENT*0..]->" +
+        "(:Category {categoryName:$category})" +
+        "RETURN p.productName as product";
 
       var result = session.readTransaction(
         tx -> tx.run(cypherQuery, 

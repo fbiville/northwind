@@ -13,17 +13,17 @@ using Neo4j.Driver;
 namespace dotnet {
   class Example {
   static async Task Main() {
-    var driver = GraphDatabase.Driver("bolt://<HOST>:<BOLTPORT>", 
-                    AuthTokens.Basic("<USERNAME>", "<PASSWORD>"));
+    var driver = GraphDatabase.Driver("neo4j+s://demo.neo4jlabs.com:7687", 
+                    AuthTokens.Basic("northwind", "northwind"));
 
     var cypherQuery =
       @"
-      MATCH (p:Product)-[:PART_OF]->(:Category)-[:PARENT*0..]-> 
-      (:Category {categoryName:$category}) 
-      RETURN p.productName as product 
+      MATCH (p:Product)-[:PART_OF]->(:Category)-[:PARENT*0..]->
+      (:Category {categoryName:$category})
+      RETURN p.productName as product
       ";
 
-    var session = driver.AsyncSession(o => o.WithDatabase("neo4j"));
+    var session = driver.AsyncSession(o => o.WithDatabase("northwind"));
     var result = await session.ReadTransactionAsync(async tx => {
       var r = await tx.RunAsync(cypherQuery, 
               new { category="Dairy Products"});
